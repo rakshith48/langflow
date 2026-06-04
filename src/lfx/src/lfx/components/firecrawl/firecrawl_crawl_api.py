@@ -83,7 +83,6 @@ class FirecrawlCrawlApi(Component):
         params.setdefault("limit", 10000)
         params.setdefault("allowExternalLinks", False)
         params.setdefault("allowBackwardLinks", False)
-        params.setdefault("ignoreSitemap", False)
         params.setdefault("ignoreQueryParameters", False)
 
         # Ensure onlyMainContent is explicitly set if not provided.
@@ -95,6 +94,9 @@ class FirecrawlCrawlApi(Component):
             kwargs["max_discovery_depth"] = kwargs.pop("max_depth")
         if "allow_backward_links" in kwargs:
             kwargs["crawl_entire_domain"] = kwargs.pop("allow_backward_links")
+        # v2 removed "ignore_sitemap"; it is now the "sitemap" mode enum.
+        if kwargs.pop("ignore_sitemap", False):
+            kwargs["sitemap"] = "skip"
 
         # Build the typed ScrapeOptions object expected by v2 from the (snake_cased) dict.
         scrape_kwargs = _to_snake_case_kwargs(scrape_options_dict)
